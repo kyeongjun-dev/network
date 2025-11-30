@@ -1,7 +1,7 @@
 import socket
 import time
 
-timeout_duration = 30  # 총 대기 시간 (초)
+timeout_duration = 10  # 총 대기 시간 (초)
 start_time = time.time() # 시작 시간 기록
 
 # 반복문을 돌면서 소켓을 신규로 생성해서 연결 시도
@@ -22,8 +22,9 @@ while True:
 
         # 재시도 하는 로직 추가
         time.sleep(1)
-        if time.time() - start_time > 30:
-            print("30초를 초과해서 종료합니다.")
+        if time.time() - start_time > timeout_duration:
+            print(f"{timeout_duration}초를 초과해서 종료합니다.")
+            break
     except Exception as e:
         print(f"오류가 발생했습니다: {e}")
     finally:
