@@ -32,13 +32,13 @@ except KeyboardInterrupt:
 HOST = 'localhost'
 PORT = 8000
 YOUR_HOST_HEADER = 'localhost'
-# (NLB_TIMEOUT, WAIT_TIME 변수는 루프 테스트에서 사용되지 않으므로 제거)
 # -----------
 
 # 사용할 요청 (GET /)
 REQUEST_KEEP_ALIVE = (
     f"GET / HTTP/1.1\r\n"
     f"Host: {YOUR_HOST_HEADER}\r\n"
+    # keep alive 연결 명시
     f"Connection: keep-alive\r\n"
     f"\r\n"
 ).encode('utf-8')
@@ -52,12 +52,11 @@ print("Press Ctrl+C to stop the test.")
 
 s = None # finally 블록에서 s를 참조할 수 있도록 외부에 선언
 try:
-    # 1. 소켓 생성 및 NLB에 연결 (Non-TLS)
+    # 1. 소켓 생성 연결 (Non-TLS)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print(f"\nConnecting to {HOST}:{PORT} (TCP)...")
     s.connect((HOST, PORT))
     print("TCP Connected!")
-    # (TLS 핸드셰이크 과정 없음)
 
     # 2. 첫 번째 요청 전송 (연결 확인용)
     print("\n--- Sending first request (GET /) ---")
