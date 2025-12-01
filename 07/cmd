@@ -1,0 +1,5 @@
+docker exec -it client tcpdump -i any -n 'port 8000' -w /app/captures/client.pcap
+docker exec -it server tcpdump -i any -n 'port 8000' -w /app/captures/server.pcap
+
+docker exec -it client python client.py 8
+docker exec -it client python client.py 15

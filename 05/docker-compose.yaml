@@ -1,0 +1,17 @@
+services:
+  server:
+    build: .
+    hostname: server       # 컨테이너 내부에서 식별될 호스트 이름
+    container_name: server
+    volumes:
+      - ./server:/app/captures # 로컬의 ./server 폴더와 마운트
+    ports:
+      - "30000:30000"      # 호스트에서도 30000번 포트 확인 가능하도록 매핑
+    command: ["sleep", "infinity"]
+
+  client:
+    build: .
+    container_name: client
+    volumes:
+      - ./client:/app/captures # 로컬의 ./client 폴더와 마운트
+    command: ["sleep", "infinity"]
