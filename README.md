@@ -13,7 +13,7 @@ USE_TLS (true, false) # default false
 endpoint
 ```
 /
-/slow-response?wait=10
+/slow?wait=10
 ```
 
 cmd
