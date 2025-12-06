@@ -1,0 +1,23 @@
+services:
+  server:
+    image: ghcr.io/kyeongjun-dev/network:dev
+    hostname: server
+    container_name: server
+    volumes:
+      - ./server_vol:/app/captures
+    ports:
+      - "8000:8000"
+    command: ["gunicorn", "--workers", "1", "-k", "gevent", "--bind", "0.0.0.0:8000", "--timeout", "10", "--keep-alive", "20", "app:app", "--log-level", "debug"]
+
+  client:
+    image: ghcr.io/kyeongjun-dev/network:dev
+    container_name: client
+    volumes:
+      - ./client_vol:/app/captures
+    command: ["sleep", "infinity"]
+    environment:
+      HOST: server
+      PORT: 8000
+      HOST_HEADER: server
+      USE_TLS: false
+      ENDPOINT: /slow?wait=11
