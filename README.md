@@ -8,6 +8,7 @@ HOST # default localhost
 PORT # default 8000
 HOST_HEADER # default HOST
 USE_TLS (true, false) # default false
+ENDPOINT (ex. /slow?wait=11)
 ```
 
 endpoint
