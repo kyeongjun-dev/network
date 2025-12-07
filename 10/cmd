@@ -1,0 +1,24 @@
+aws sts get-caller-identity --profile kyeongjun-dev
+
+eksctl create cluster -f cluster.yaml --profile kyeongjun-dev
+eksctl delete cluster -f cluster.yaml --profile kyeongjun-dev
+
+aws eks update-kubeconfig --region ap-northeast-2 --name my-cluster --profile kyeongjun-dev
+
+
+curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.13.3/docs/install/iam_policy.json
+
+aws --profile kyeongjun-dev iam create-policy \
+    --policy-name AWSLoadBalancerControllerIAMPolicy \
+    --policy-document file://iam_policy.json
+
+eksctl create iamserviceaccount \
+    --cluster=my-cluster \
+    --namespace=kube-system \
+    --name=aws-load-balancer-controller \
+    --attach-policy-arn=arn:aws:iam::<AWS 계정 ID>:policy/AWSLoadBalancerControllerIAMPolicy \
+    --override-existing-serviceaccounts \
+    --region ap-northeast-2 \
+    --approve \
+    --profile kyeongjun-dev
+

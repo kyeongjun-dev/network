@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: client
+  labels:
+    app: client
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: client
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client
+  labels:
+    app: client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+        - name: client
+          image: ghcr.io/kyeongjun-dev/network:dev
+          imagePullPolicy: Always
+          command: ["sleep", "infinity"]
+          env:
+            - name: HOST
+              value: "server-2f43e9b6339f7f95.elb.ap-northeast-2.amazonaws.com"
+            - name: PORT
+              value: "80"
+            - name: HOST_HEADER
+              value: "server-2f43e9b6339f7f95.elb.ap-northeast-2.amazonaws.com"
+            - name: USE_TLS
+              value: "false"
+            - name: ENDPOINT
+              value: "/"
+              # value: "/slow?wait=11"
+      nodeSelector:
+        role: client

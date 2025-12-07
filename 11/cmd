@@ -1,0 +1,14 @@
+export CLIENT=$(kubectl get pod -n client | grep client | awk '{print $1}')
+export SERVER=$(kubectl get pod -n server | grep server | awk '{print $1}')
+
+kubectl -n client exec -it $CLIENT -- tcpdump -i any -n 'port 80 or port 8000' -w /app/client.pcap
+kubectl -n server exec -it $SERVER -- tcpdump -i any -n 'port 80 or port 8000' -w /app/server.pcap
+
+kubectl -n client exec -it $CLIENT -- python client.py 25
+kubectl -n server logs -f $SERVER
+
+kubectl -n client cp $CLIENT:/app/client.pcap client.pcap
+kubectl -n server cp $SERVER:/app/server.pcap server.pcap
+
+kubectl -n client rollout restart deployment client
+kubectl -n server rollout restart deployment server
