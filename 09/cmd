@@ -1,0 +1,9 @@
+kind create cluster --name 1-33 --config cluster.yaml
+
+kubectl create ns client
+kubectl create ns server
+
+kubectl apply -f client.yaml -n client
+kubectl apply -f server.yaml -n server
+
+kubectl -n client exec -it client-578c5494df-brldf -- python client.py 5
