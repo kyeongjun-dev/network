@@ -1,0 +1,54 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: my-cluster
+  region: ap-northeast-2
+  version: "1.33"
+
+availabilityZones: ["ap-northeast-2a", "ap-northeast-2c"]
+
+vpc:
+  clusterEndpoints:
+    publicAccess: true  # kubectl exec를 위해 API 서버는 Public에서 접근 허용
+    privateAccess: true
+  nat:
+    gateway: Single
+
+# IAM OIDC 활성화 (LB 컨트롤러 등을 위해 필수)
+iam:
+  withOIDC: true
+
+managedNodeGroups:
+  # 1. Infra Node Group (모니터링, ingress controller 등)
+  - name: infra
+    instanceType: t3.medium
+    minSize: 1
+    maxSize: 2
+    desiredCapacity: 1
+    privateNetworking: true
+    availabilityZones: ["ap-northeast-2a"]
+    labels:
+      role: infra
+
+  # 2. Server Node Group (백엔드 API 등)
+  - name: server
+    instanceType: t3.medium
+    minSize: 1
+    maxSize: 1
+    desiredCapacity: 1
+    privateNetworking: true
+    availabilityZones: ["ap-northeast-2a"]
+    labels:
+      role: server
+
+  # 3. Client Node Group (테스트용 클라이언트 등)
+  - name: client
+    instanceType: t3.medium
+    minSize: 1
+    maxSize: 1
+    desiredCapacity: 1
+    privateNetworking: true
+    availabilityZones: ["ap-northeast-2a"]
+    labels:
+      role: client

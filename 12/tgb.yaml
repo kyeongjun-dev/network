@@ -1,0 +1,9 @@
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: server
+spec:
+  serviceRef:
+    name: server
+    port: 8000
+  targetGroupARN: <arn-to-targetGroup>
