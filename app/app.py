@@ -7,6 +7,10 @@ app = Flask(__name__)
 def hello():
     return "Hello from Flask App behind Gunicorn!"
 
+@app.route('/index')
+def index():
+    return "Hello index from Flask App behind Gunicorn!"
+
 @app.route('/slow')
 def slow():
     try:

@@ -3,7 +3,7 @@ ENV PYTHONUNBUFFERED=TRUE
 
 WORKDIR /app
 
-RUN apt update -y && apt install -y procps net-tools vim tcpdump iproute2
+RUN apt update -y && apt install -y procps net-tools vim tcpdump iproute2 curl
 
 RUN mkdir -p /app/captures
 
