@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: server
+  labels:
+    app: server
+spec:
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  selector:
+    app: server
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+  labels:
+    app: server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+        - name: server
+          image: ghcr.io/kyeongjun-dev/network:dev
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          command: ["gunicorn", "--workers", "1", "-k", "gevent", "--bind", "0.0.0.0:8000", "--timeout", "10", "--keep-alive", "20", "app:app", "--log-level", "debug"]
+      nodeSelector:
+        role: server
+---
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: server
+spec:
+  selector:
+    istio: gateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: server
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - server
+  http:
+  - route:
+    - destination:
+        host: server
+        port:
+          number: 8000

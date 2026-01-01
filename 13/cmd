@@ -1,0 +1,23 @@
+kind create cluster --name 1-33 --config cluster.yaml
+
+helmfile sync --selector name=istio-base
+helmfile sync --selector name=istio-istiod
+helmfile sync --selector name=istio-gateway
+
+kubectl create ns server
+kubectl -n server apply -f server.yaml
+
+---
+export SERVER=$(kubectl get pod -n server | grep server | awk '{print $1}')
+export ISTIOD=$(kubectl get pod -n istio-system | grep istiod | awk '{print $1}')
+
+# 한 줄로 실행
+read GATEWAY1 GATEWAY2 <<< $(kubectl get pods -n istio-system -l istio=gateway -o jsonpath='{.items[*].metadata.name}')
+# 환경 변수로 내보내기 (export)
+export GATEWAY1 GATEWAY2
+
+kubectl sniff $SERVER -n server -f 'port 8000 or port 30800 or port 80' --image ghcr.io/nefelim4ag/ksniff-helper:v4 --tcpdump-image ghcr.io/nefelim4ag/tcpdump:latest
+kubectl sniff $GATEWAY1 -n istio-system -p -f 'port 8000 or port 30800 or port 80' --image ghcr.io/nefelim4ag/ksniff-helper:v4 --tcpdump-image ghcr.io/nefelim4ag/tcpdump:latest
+kubectl sniff $GATEWAY2 -n istio-system -p -f 'port 8000 or port 30800 or port 80' --image ghcr.io/nefelim4ag/ksniff-helper:v4 --tcpdump-image ghcr.io/nefelim4ag/tcpdump:latest
+
+PORT=30800 ENDPOINT="/index" python ./client.py 10

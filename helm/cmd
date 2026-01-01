@@ -1,0 +1,17 @@
+helm search repo istio
+helm pull istio/base
+tar xf base-1.28.1.tgz
+helm pull istio/istiod
+tar xf istiod-1.28.1.tgz
+istio/gateway
+tar xf gateway-1.28.1.tgz
+
+kubectl debug -it istiod-6f4bc66cbf-d7ccn -n istio-system \
+  --image=nicolaka/netshoot \
+  --target=discovery \
+  -- tcpdump -i any -vvvv
+
+kubectl debug -it istiod-6f4bc66cbf-d7ccn -n istio-system \
+  --image=nicolaka/netshoot \
+  --target=discovery \
+  -- tcpdump -i any port 15012 -w - > istiod_traffic.pcap

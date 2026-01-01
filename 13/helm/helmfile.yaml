@@ -1,0 +1,24 @@
+helmDefaults:
+  kubeContext: kind-1-33
+  createNamespace: true
+
+missingFileHandler: Error
+
+releases:
+  - name: istio-base
+    namespace: istio-system
+    chart: ./charts/base
+    values:
+      - ./values/istio-base.yaml
+
+  - name: istio-gateway
+    namespace: istio-system
+    chart: ./charts/gateway
+    values:
+      - ./values/istio-gateway.yaml
+
+  - name: istio-istiod
+    namespace: istio-system
+    chart: ./charts/istiod
+    values:
+      - ./values/istio-istiod.yaml

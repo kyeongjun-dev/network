@@ -1,0 +1,28 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  image: kindest/node:v1.33.4
+  extraPortMappings:
+  # containerPort는 Kind 노드(컨테이너)의 포트
+  # 이 포트는 Service의 nodePort와 일치
+  - containerPort: 30800
+    # hostPort는 로컬 머신(PC)의 포트
+    hostPort: 30800
+    protocol: TCP
+- role: worker
+  image: kindest/node:v1.33.4
+  labels:
+    role: server
+- role: worker
+  image: kindest/node:v1.33.4
+  labels:
+    role: istiod
+- role: worker
+  image: kindest/node:v1.33.4
+  labels:
+    role: istio-gateway
+- role: worker
+  image: kindest/node:v1.33.4
+  labels:
+    role: istio-gateway
